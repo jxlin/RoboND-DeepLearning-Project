@@ -103,10 +103,11 @@ ENV/
 
 #Simulator folder
 Simulator/
-# data folders
-data/train.zip
-data/validation.zip
-data/sample_evaluation_data.zip
+# data folders and .zip
+data/train*
+data/validation*
+data/sample_evaluation_data*
+
 
 RUNS/
 
