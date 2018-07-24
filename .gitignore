@@ -101,5 +101,12 @@ ENV/
 # mypy
 .mypy_cache/
 
+#Simulator folder
+Simulator/
+# data folders
+data/train.zip
+data/validation.zip
+data/sample_evaluation_data.zip
+
 RUNS/
 
