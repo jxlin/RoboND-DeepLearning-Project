@@ -6,6 +6,11 @@
 [img_fcn_architecture_2]: imgs/img_fcn_model_2_deeper.png
 [img_fcn_architecture_3]: imgs/img_fcn_model_3_vgg.png
 
+[img_semantic_segmentation_input]: imgs/img_semantic_segmentation_input.jpeg
+[img_semantic_segmentation_output]: imgs/img_semantic_segmentation_output.png
+[img_semantic_segmentation_definition]: imgs/img_semantic_segmentation.png
+[img_vgg_image_classifier]: imgs/img_vgg_image_classifier.png
+
 [img_IoU_results]: imgs/img_IoU_results.png
 
 [gif_follow_me_sample_1]: imgs/gif_follow_me_sample_1.gif
@@ -41,15 +46,37 @@ This work is divided into the following sections :
 7.  [Conclusions and future work](#conclusions)
 
 
-## Semantic segmentation and FCNs <a id='semantic_segmentation'></a>
+## **Semantic segmentation and FCNs** <a id='semantic_segmentation'></a>
+
+<!-- ### **Problem statement**-->
+<!-- RUBRIC POINT 4 -->
+<!--The student is able to identify the use of various reasons for encoding / decoding images, when it should be used, why it is useful, and any problems that may arise.-->
+
+### _**Problem definition**_
+
+The problem of **semantic segmentation** consists of doing single-pixel classification for every pixel in an image ( assign a category to each pixel ). The output of semantic segmentation is then an image with pixels values representing the one-hot encoded class assigned.
+
+![SEMANTIC SEGMENTATION DEFINITION][img_semantic_segmentation_definition]
+
+The approach taken in this work is to use Fully Convolutional Networks, which allow us to obtain this required mapping.
+
+### _**Fully Convolutional Networks**_
+
+Deep networks give state of the art results in various computer vision tasks ( like [image classification](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf) ). The common approach is to use a network architecture that includes **convolutional layers**, in order to take advantage of the spatial information of the problem ( images, which are 2D arrays ).
+
+In image recognition, an architecture used would be the following ( image based on VGG-B configuration, with 13 layers, from [**this**](https://arxiv.org/pdf/1409.1556.pdf) paper ) :
+
+![VGG IMAGE CLASSIFICATION][img_vgg_image_classifier]
+
+The last layers of this model are Fully Connected layers, which give the final output as a vector of probabilities for each class we have to detect.
+
+To get an output image we instead need to replace the last fully connected layers for some other type of structures that will give us as a results a volume ( width, height, depth ), so we have to use a structure that operates with volumes.
+
+## **Data gathering** <a id='data_gathering'></a>
 
 TODO
 
-## Data gathering <a id='data_gathering'></a>
-
-TODO
-
-## Network architecture and implementation <a id='network_architecture'></a>
+## **Network architecture and implementation** <a id='network_architecture'></a>
 
 ![SIMPLE ARCHITECTURE 1][img_fcn_architecture_1]
 
@@ -57,15 +84,15 @@ TODO
 
 ![SIMPLE ARCHITECTURE 3][img_fcn_architecture_3]
 
-## Hyperparameters tuning <a id='hyperparameters_tuning'></a>
+## **Hyperparameters tuning** <a id='hyperparameters_tuning'></a>
 
 TODO
 
-## Model training <a id='model_training'></a>
+## **Model training** <a id='model_training'></a>
 
 TODO
 
-## Results <a id='results'></a>
+## **Results** <a id='results'></a>
 
 <!-- RUBRIC POINT 5 -->
 The student is able to clearly articulate whether this model and data would work well for following another object (dog, cat, car, etc.) instead of a human and if not, what changes would be required. 
@@ -85,7 +112,7 @@ The resulting final score ( IoU based ) for one of our models is 0.465.
 
 All the trained models that we uploaded obtained a score greater than the required score of 0.4, with values oscillating very close to the previously mentioned score.
 
-## Conclusions and future work <a id='conclusions'></a>
+## **Conclusions and future work** <a id='conclusions'></a>
 
 TODO
 
@@ -107,11 +134,6 @@ TODO
 
 
 
-
-### **Problem statement**
-
-<!-- RUBRIC POINT 4 -->
-The student is able to identify the use of various reasons for encoding / decoding images, when it should be used, why it is useful, and any problems that may arise.
 
 ### **Network architecture**
 
