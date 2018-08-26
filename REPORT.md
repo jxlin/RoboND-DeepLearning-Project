@@ -6,15 +6,42 @@
 [img_fcn_architecture_2]: imgs/img_fcn_model_2_deeper.png
 [img_fcn_architecture_3]: imgs/img_fcn_model_3_vgg.png
 
+[gif_follow_me_sample_1]: imgs/gif_follow_me_sample_1.gif
+[gif_follow_me_sample_2]: imgs/gif_follow_me_sample_2.gif
+
 [**video 1 - follow me mode - inference**](https://www.youtube.com/watch?v=hCQh8I8g0sg)
 
 [**video 2 - special simulator build for data gathering**](https://www.youtube.com/watch?v=Nq95abB7FiE)
 
-## Introduction
+## **Introduction**
 
-This project consists in the implementation of a Fully Convolutional Neural Network for semantic segmentation, which is used as a component of a perception pipeline that allows a quadrotor to 
+This project consists in the implementation of a Fully Convolutional Neural Network for **semantic segmentation**, which is used as a component of a perception pipeline that allows a quadrotor to follow a target person in a simulator.
 
-## **Rubric points**
+![SAMPLE FOLLOW ME FOUND TARGET][gif_follow_me_sample_1]
+
+![SAMPLE FOLLOW ME FOLLOWING TARGET][gif_follow_me_sample_2]
+
+To achieve this we followed these steps :
+
+*   Gathered training data from a simulator ( made a special build for easier data gathering, compared to the standard suggested approach ).
+*   Designed a implemented a Fully Convolutional Network ( using keras and tensorflow ) for the task of semantic segmentation, based on the lectures given at udacity's RoboND deep learning section, and in [this](https://people.eecs.berkeley.edu/%7Ejonlong/long_shelhamer_fcn.pdf) and [this](https://arxiv.org/pdf/1409.1556.pdf) papers.
+*   Made experiments to tune our training hyperparameters ( learning rate, batch size and number of epochs ).
+*   Trained the designed model using the gathered training data and tuned hyperparameters and checked the testing accuracy using the Intersection Over Union (IoU) metric.
+
+This work is divided into the following sections :
+
+1.  [Semantic segmentation and FCNs](#semantic_segmentation)
+2.  [Data gathering](#data_gathering)
+3.  [Network architecture and implementation](#network_architecture)
+4.  [Hyperparameters tuning](#hyperparameters_tuning)
+5.  [Model training](#model_training)
+6.  [Results](#results)
+7.  [Conclusions and future work](#conclusions)
+
+
+## Semantic segmentation and FCNs <id ="semantic_segmentation"></a>
+
+## Data gathering <a id='data_gathering'></a>
 
 ### **Problem statement**
 
