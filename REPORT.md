@@ -2,12 +2,17 @@
 
 [//]: # (Image References)
 
-[img_fcn_architecture_1]: imgs/img_fcn_model_simple_1.png
-[img_fcn_architecture_2]: imgs/img_fcn_model_simple_2.png
+[img_fcn_architecture_1]: imgs/img_fcn_model_1_simple.png
+[img_fcn_architecture_2]: imgs/img_fcn_model_2_deeper.png
+[img_fcn_architecture_3]: imgs/img_fcn_model_3_vgg.png
+
+[**video 1 - follow me mode - inference**](https://www.youtube.com/watch?v=hCQh8I8g0sg)
+
+[**video 2 - special simulator build for data gathering**](https://www.youtube.com/watch?v=Nq95abB7FiE)
 
 ## Introduction
 
-<!--TODO-->
+This project consists in the implementation of a Fully Convolutional Neural Network for semantic segmentation, which is used as a component of a perception pipeline that allows a quadrotor to 
 
 ## **Rubric points**
 
@@ -21,6 +26,8 @@ The student is able to identify the use of various reasons for encoding / decodi
 ![SIMPLE ARCHITECTURE 1][img_fcn_architecture_1]
 
 ![SIMPLE ARCHITECTURE 2][img_fcn_architecture_2]
+
+![SIMPLE ARCHITECTURE 3][img_fcn_architecture_3]
 
 <!-- RUBRIC POINT 1 -->
 The student clearly explains each layer of the network architecture and the role that it plays in the overall network. The student can demonstrate the benefits and/or drawbacks of different network architectures pertaining to this project and can justify the current network with factual data. Any choice of configurable parameters should also be explained in the network architecture.
