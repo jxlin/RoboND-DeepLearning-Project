@@ -6,6 +6,8 @@
 [img_fcn_architecture_2]: imgs/img_fcn_model_2_deeper.png
 [img_fcn_architecture_3]: imgs/img_fcn_model_3_vgg.png
 
+[img_IoU_results]: imgs/img_IoU_results.png
+
 [gif_follow_me_sample_1]: imgs/gif_follow_me_sample_1.gif
 [gif_follow_me_sample_2]: imgs/gif_follow_me_sample_2.gif
 
@@ -65,7 +67,23 @@ TODO
 
 ## Results <a id='results'></a>
 
-TODO
+<!-- RUBRIC POINT 5 -->
+The student is able to clearly articulate whether this model and data would work well for following another object (dog, cat, car, etc.) instead of a human and if not, what changes would be required. 
+
+<!-- RUBRIC POINT 6 DONE -->
+The trained models can be found [**here**](https://github.com/wpumacay/RoboND-DeepLearning-Project/tree/master/data/weights) and include the following trained models :
+
+*   Model 1 ( model_weights_simple_1_full_dataset.h5 ) : 3 convolutional layers and 3 transpose-convolutional layers, trained with batch size of 32.
+*   Model 2 ( model_weights_simple_2_full_dataset.h5 ) : Same model as before, but trained with a batch size of 64.
+*   Model 3 ( model_weights_simple_3_full_dataset.h5 ) : A one layer deeper model, with 4 convolutional layers and 4 transpose-convolutional layers.
+*   Model 4 ( model_weights_vgg.h5 ) : A deeper model with an encoder based on the VGG-13 architecture ( reference [**here**](https://arxiv.org/pdf/1409.1556.pdf) ). The encoder has 8 convolutional layers and 5 max. pooling layers.
+
+<!-- RUBRIC POINT 7 DONE -->
+The resulting final score ( IoU based ) for one of our models is 0.465.
+
+![RESULT_IOU_0][img_IoU_results]
+
+All the trained models that we uploaded obtained a score greater than the required score of 0.4, with values oscillating very close to the previously mentioned score.
 
 ## Conclusions and future work <a id='conclusions'></a>
 
@@ -118,14 +136,3 @@ The student explains their neural network parameters including the values select
     Etc.
 
 All configurable parameters should be explicitly stated and justified. 
-
-### **Results**
-
-<!-- RUBRIC POINT 5 -->
-The student is able to clearly articulate whether this model and data would work well for following another object (dog, cat, car, etc.) instead of a human and if not, what changes would be required. 
-
-<!-- RUBRIC POINT 6-->
-The file is in the correct format (.h5) and runs without errors.
-
-<!-- RUBRIC POINT 7 -->
-The neural network should obtain an accuracy greater than or equal to 40% (0.40) using the Intersection over Union (IoU) metric.
