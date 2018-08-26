@@ -41,7 +41,11 @@ This work is divided into the following sections :
 
 ## Semantic segmentation and FCNs <id ="semantic_segmentation"></a>
 
+FOOOOOO
+
 ## Data gathering <a id='data_gathering'></a>
+
+BARRR
 
 ### **Problem statement**
 
