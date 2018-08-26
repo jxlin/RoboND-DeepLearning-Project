@@ -41,11 +41,54 @@ This work is divided into the following sections :
 
 ## Semantic segmentation and FCNs <a id='semantic_segmentation'></a>
 
-FOOOOOO
+TODO
 
 ## Data gathering <a id='data_gathering'></a>
 
-BARRR
+TODO
+
+## Network architecture and implementation <a id='network_architecture'></a>
+
+![SIMPLE ARCHITECTURE 1][img_fcn_architecture_1]
+
+![SIMPLE ARCHITECTURE 2][img_fcn_architecture_2]
+
+![SIMPLE ARCHITECTURE 3][img_fcn_architecture_3]
+
+## Hyperparameters tuning <a id='hyperparameters_tuning'></a>
+
+TODO
+
+## Model training <a id='model_training'></a>
+
+TODO
+
+## Results <a id='results'></a>
+
+TODO
+
+## Conclusions and future work <a id='conclusions'></a>
+
+TODO
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ### **Problem statement**
 
@@ -53,12 +96,6 @@ BARRR
 The student is able to identify the use of various reasons for encoding / decoding images, when it should be used, why it is useful, and any problems that may arise.
 
 ### **Network architecture**
-
-![SIMPLE ARCHITECTURE 1][img_fcn_architecture_1]
-
-![SIMPLE ARCHITECTURE 2][img_fcn_architecture_2]
-
-![SIMPLE ARCHITECTURE 3][img_fcn_architecture_3]
 
 <!-- RUBRIC POINT 1 -->
 The student clearly explains each layer of the network architecture and the role that it plays in the overall network. The student can demonstrate the benefits and/or drawbacks of different network architectures pertaining to this project and can justify the current network with factual data. Any choice of configurable parameters should also be explained in the network architecture.
