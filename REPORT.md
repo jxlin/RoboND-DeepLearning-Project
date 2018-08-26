@@ -10,6 +10,7 @@
 [img_semantic_segmentation_output]: imgs/img_semantic_segmentation_output.png
 [img_semantic_segmentation_definition]: imgs/img_semantic_segmentation.png
 [img_vgg_image_classifier]: imgs/img_vgg_image_classifier.png
+[img_fcn_paper_1]: imgs/img_fcn_paper_1.png
 
 [img_IoU_results]: imgs/img_IoU_results.png
 
@@ -58,7 +59,7 @@ The problem of **semantic segmentation** consists of doing single-pixel classifi
 
 ![SEMANTIC SEGMENTATION DEFINITION][img_semantic_segmentation_definition]
 
-The approach taken in this work is to use Fully Convolutional Networks, which allow us to obtain this required mapping.
+The approach taken in this work is to use Fully Convolutional Networks, which **allow us to obtain this required mapping**.
 
 ### _**Fully Convolutional Networks**_
 
@@ -70,13 +71,44 @@ In image recognition, an architecture used would be the following ( image based 
 
 The last layers of this model are Fully Connected layers, which give the final output as a vector of probabilities for each class we have to detect.
 
-To get an output image we instead need to replace the last fully connected layers for some other type of structures that will give us as a results a volume ( width, height, depth ), so we have to use a structure that operates with volumes.
+To get an output image we instead need to replace the last fully connected layers for some other type of structures that will give us a volume as a result ( width, height, depth ), so we have to use a structure that operates with volumes. 
+
+Because of this, we make use of convolutional layers, as described in [**this**](https://people.eecs.berkeley.edu/%7Ejonlong/long_shelhamer_fcn.pdf) paper. The following image ( from [1] ) shows the general architecture described in the paper.
+
+![FCN from paper 1][img_fcn_paper_1]
+
+The general idea is to replace the fully connected layers for upsampling layers, which avoid flattening and keep working with 4D volumes ( batch, width, height, depth ) instead of flattened values. This resulting architecture is called a **Fully Convolutional Layers** ( all layers operate with volumes ).
+
+### _**Intuition for FCNs usage**_
+
+The resulting architecture has a similar structure as other Deep models used for different tasks, like AutoEncoders, and Sequence-to-Sequence models. Both of these models have 2 specific parts in their structure : an **Encoder** and a **Decoder**.
+
+*   In [**autoencoders**](https://www.youtube.com/watch?v=9zKuYvjFFS8), the encoder tries to reduce the dimensionality of the input image ( similar to generating an embedding ), and the encoder is in charge of taking this reduced representation and generating an image out of it, which should be very similar to the original image.
+
+*   In sequence to sequence models ( like in machine translation [3] ) the encoder reduces the input sequence to a vector representation of this input, and then the decoder generates an output sequence from this vector representation in another language.
+
+The intuition of why this architecture would work is because of the encoding-decoding structures :
+
+*   The encoding structure is in charge of reducing the original input volume to a smaller volume representation, which holds information that describe this image.
+*   The decoding structure is in charge of taking this volume representation and generating an output image that solves the task at hand ( in our case, generate the pixel-wise classification of the input image in an output volume ).
+
+
 
 ## **Data gathering** <a id='data_gathering'></a>
 
 TODO
 
 ## **Network architecture and implementation** <a id='network_architecture'></a>
+
+<!-- RUBRIC POINT 1 -->
+<!--The student clearly explains each layer of the network architecture and the role that it plays in the overall network. The student can demonstrate the benefits and/or drawbacks of different network architectures pertaining to this project and can justify the current network with factual data. Any choice of configurable parameters should also be explained in the network architecture.
+
+The student shall also provide a graph, table, diagram, illustration or figure for the overall network to serve as a reference for the reviewer.-->
+
+<!-- RUBRIC POINT 3 -->
+<!--The student demonstrates a clear understanding of 1 by 1 convolutions and where/when/how it should be used.
+
+The student demonstrates a clear understanding of a fully connected layer and where/when/how it should be used.-->
 
 ![SIMPLE ARCHITECTURE 1][img_fcn_architecture_1]
 
@@ -119,33 +151,20 @@ TODO
 
 
 
+## **References** <a id='references'></a>
 
+*   [1] Jonathan Long, Evan Shelhamer, Trevor Darrel. _**Fully Convolutional Networks for Semantic Segmentation**_ in IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 39, no. 4, pp. 640-651, 1 April 2017.
+*   [2] Karen Simonyan, Andrew Zisserman. _**Very Deep Convolutional Networks for Large-Scale Image Recognition**_. ArXiv 2014.
+*   [3] Ilya Sutskever, Oriol Vinyals, Quoc V. Le. _**Sequence to Sequence Learning with Neural Networks**_ Proc. NIPS, Montreal, Canada, 2014.
 
+## **Other resources**
 
-
-
-
-
-
-
-
-
-
-
+*   [**Variational AutoEncoders explanation**](https://www.youtube.com/watch?v=9zKuYvjFFS8)
+*   [**Stanford cs231n lecture on detection and segmentation**](https://youtu.be/nDPWywWRIRo?t=9m18s)
 
 
 
 ### **Network architecture**
-
-<!-- RUBRIC POINT 1 -->
-The student clearly explains each layer of the network architecture and the role that it plays in the overall network. The student can demonstrate the benefits and/or drawbacks of different network architectures pertaining to this project and can justify the current network with factual data. Any choice of configurable parameters should also be explained in the network architecture.
-
-The student shall also provide a graph, table, diagram, illustration or figure for the overall network to serve as a reference for the reviewer.
-
-<!-- RUBRIC POINT 3 -->
-The student demonstrates a clear understanding of 1 by 1 convolutions and where/when/how it should be used.
-
-The student demonstrates a clear understanding of a fully connected layer and where/when/how it should be used.
 
 ### **Hyperparameters tuning**
 
