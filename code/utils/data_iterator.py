@@ -98,6 +98,9 @@ class BatchIteratorSimple(Iterator):
         im_files = sorted(glob(os.path.join(data_folder, 'images', '*.jpeg')))
         mask_files = sorted(glob(os.path.join(data_folder, 'masks', '*.png')))
 
+        print( 'num images : ', len( im_files ) )
+        print( 'num masks : ', len( mask_files ) )
+
         if len(im_files) == 0:
             raise ValueError('No image files found, check your image diractories')
 
