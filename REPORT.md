@@ -12,10 +12,18 @@
 [img_vgg_image_classifier]: imgs/img_vgg_image_classifier.png
 [img_fcn_paper_1]: imgs/img_fcn_paper_1.png
 
+[img_quadsim_1]: imgs/img_quadsim_1.png
+[img_quadsim_data_gathering_1]: imgs/img_quadsim_data_gathering_1.png
+
+[img_cs231n_cnn_basics_1]: imgs/img_cs231n_cnn_basics_1.png
+[img_cs231n_cnn_basics_2]: imgs/img_cs231n_basics_output_volume.png
+
 [img_IoU_results]: imgs/img_IoU_results.png
 
 [gif_follow_me_sample_1]: imgs/gif_follow_me_sample_1.gif
 [gif_follow_me_sample_2]: imgs/gif_follow_me_sample_2.gif
+
+[gif_quadsim_tools]: imgs/gif_quadsim_tools.gif
 
 [**video 1 - follow me mode - inference**](https://www.youtube.com/watch?v=hCQh8I8g0sg)
 
@@ -23,7 +31,7 @@
 
 ## **Introduction**
 
-This project consists in the implementation of a Fully Convolutional Neural Network for **semantic segmentation**, which is used as a component of a perception pipeline that allows a quadrotor to follow a target person in a simulator.
+This project consists in the implementation of a Fully Convolutional Neural Network for **semantic segmentation**, which is used as a component of a perception pipeline that allows a quadrotor to follow a target person in a simulated environment.
 
 ![SAMPLE FOLLOW ME FOUND TARGET][gif_follow_me_sample_1]
 
@@ -34,7 +42,7 @@ To achieve this we followed these steps :
 *   Gathered training data from a simulator ( made a special build for easier data gathering, compared to the standard suggested approach ).
 *   Designed a implemented a Fully Convolutional Network ( using keras and tensorflow ) for the task of semantic segmentation, based on the lectures given at udacity's RoboND deep learning section, and in [this](https://people.eecs.berkeley.edu/%7Ejonlong/long_shelhamer_fcn.pdf) and [this](https://arxiv.org/pdf/1409.1556.pdf) papers.
 *   Made experiments to tune our training hyperparameters ( learning rate, batch size and number of epochs ).
-*   Trained the designed model using the gathered training data and tuned hyperparameters and checked the testing accuracy using the Intersection Over Union (IoU) metric.
+*   Trained the designed model using the gathered training data, tuned the model hyperparameters, and checked the testing accuracy using the Intersection Over Union (IoU) metric.
 
 This work is divided into the following sections :
 
@@ -55,7 +63,7 @@ This work is divided into the following sections :
 
 ### _**Problem definition**_
 
-The problem of **semantic segmentation** consists of doing single-pixel classification for every pixel in an image ( assign a category to each pixel ). The output of semantic segmentation is then an image with pixels values representing the one-hot encoded class assigned.
+The problem of **semantic segmentation** consists of doing single-pixel classification for every pixel in an image ( assign a class label to each pixel ). The desired output of semantic segmentation is then an image with pixels values representing the one-hot encoded class assigned.
 
 ![SEMANTIC SEGMENTATION DEFINITION][img_semantic_segmentation_definition]
 
@@ -63,7 +71,7 @@ The approach taken in this work is to use Fully Convolutional Networks, which **
 
 ### _**Fully Convolutional Networks**_
 
-Deep networks give state of the art results in various computer vision tasks ( like [image classification](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf) ). The common approach is to use a network architecture that includes **convolutional layers**, in order to take advantage of the spatial information of the problem ( images, which are 2D arrays ).
+Deep networks give state of the art results in various computer vision tasks ( like [image classification](https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks.pdf) ). The common approach is to use network architectures that include **convolutional layers**, in order to take advantage of the spatial information of the problem ( images, which are 2D arrays ).
 
 In image recognition, an architecture used would be the following ( image based on VGG-B configuration, with 13 layers, from [**this**](https://arxiv.org/pdf/1409.1556.pdf) paper ) :
 
@@ -83,9 +91,9 @@ The general idea is to replace the fully connected layers for upsampling layers,
 
 The resulting architecture has a similar structure as other Deep models used for different tasks, like AutoEncoders, and Sequence-to-Sequence models. Both of these models have 2 specific parts in their structure : an **Encoder** and a **Decoder**.
 
-*   In [**autoencoders**](https://www.youtube.com/watch?v=9zKuYvjFFS8), the encoder tries to reduce the dimensionality of the input image ( similar to generating an embedding ), and the encoder is in charge of taking this reduced representation and generating an image out of it, which should be very similar to the original image.
+*   In [**autoencoders**](https://www.youtube.com/watch?v=9zKuYvjFFS8), the encoder tries to reduce the dimensionality of the input image ( similar to generating an embedding ), and the decoder is in charge of taking this reduced representation and generate an image out of it, which should be very similar to the original image.
 
-*   In sequence to sequence models ( like in machine translation [3] ) the encoder reduces the input sequence to a vector representation of this input, and then the decoder generates an output sequence from this vector representation in another language.
+*   In sequence to sequence models ( like in machine translation [3] ) the encoder reduces the input sequence to a vector representation of this input, and then the decoder generates an output sequence in another language based in this intermediate vector representation.
 
 The intuition of why this architecture would work is because of the encoding-decoding structures :
 
@@ -93,10 +101,44 @@ The intuition of why this architecture would work is because of the encoding-dec
 *   The decoding structure is in charge of taking this volume representation and generating an output image that solves the task at hand ( in our case, generate the pixel-wise classification of the input image in an output volume ).
 
 
-
 ## **Data gathering** <a id='data_gathering'></a>
 
-TODO
+Our benchmark for testing our architecture is a simulated environment made in [**Unity**](https://unity3d.com/). The simulator is a build from [**this**](https://github.com/udacity/RoboND-QuadRotor-Unity-Simulator) project made by Udacity.
+
+![QUADSIM snapshot][img_quadsim_1]
+
+The process to follow is to use the simulator to generate image data from the GimbalCamera in the Quadrotor, and then preprocess it to get the training data ( input images and output masks ).
+
+![QUADSIM data gathering 1][img_quadsim_data_gathering_1]
+
+The main bottleneck is to make the paths that the quadrotor and target person should follow, and also the spawning points for the other people. At first the functionality provided is enough to get some batches of data, but after some digging into an estimate of the amount of data required and some initial results we choose the options of taking large batches of data, mostly because we expected at first that our agent should be able to navigate the whole environment.
+
+Based on some intuition from [**here**](https://youtu.be/C_LGsoe36I8?t=18m56s), in which they explain how imitation learning works for a self-driving car made by Nvidia, we got the conclussion that our dataset should be expressive enough, so large batches of data should be taken from the simulator, in various situations as explained in the lectures from Udacity ( tips about data gathering ).
+
+The current approach proposed, while possible, is a bit impractical if various scenarios are needed. Based on this issue, we decided to change the simulator in order to implement extra data-gathering tools for this purpose ( a quick video of the tools is found [**here**](https://www.youtube.com/watch?v=Nq95abB7FiE) ). The implementation I made to add these tools can be found in [**this**](https://github.com/udacity/RoboND-QuadRotor-Unity-Simulator) forked repo ( I will make a pull request, once I get to make a summary of the new options available and how to use them ).
+
+![QUADSIM TOOLS][gif_quadsim_tools]
+
+We abstracted the data recording step into **schedules**, which are formed by the following :
+
+*   A patrol path for the quadrotor
+*   A hero path for the target
+*   A group of spawn points
+*   A mode of operation : follow-target, follow-target far, patrol.
+
+We added several options to allow the edition and saving/loading of this schedules into **.json** files. The schedules we created for our data recording can be found [**here**](https://github.com/wpumacay/RoboND-DeepLearning-Project/tree/master/data/schedules). After loading the schedules, we can request a full recording of all of them, and wait for some hours to get our large batches of data.
+
+Using this approach, we gathered a training set of **150000** training examples, which we preprocessed with a modified version of the preprocessing script provided ( link [**here**](https://github.com/wpumacay/RoboND-QuadRotor-Unity-Simulator/blob/master/preprocess_ims.py) ), which gives us a resulting dataset of **154131** ( including the provided initial training-only dataset ).
+
+We chose this amount of data because we wanted to try a bigger endoder architecture, which is based on the VGG-B configuration ( 13 layers ). Some colleagues in the lab have worked with these architectures, and as they suggested, some bigger dataset would be required because of the deeper architecture. 
+
+To make sure that more data would be needed I ran some initial tests using the 3 architectures I will show in the next sections, and could not achieve the required score by a small margin ( 0.35 final score in the initial experiments ). Based on the false positive and false negatives returned we came to the conclussion that we needed more data, specially more data for 3 scenarios ( already suggested in the lectures ) :
+
+*   Data with the target visible, and with a big crowd.
+*   Data with the target visible but very far.
+*   Data while in standard patrol ( mostly target not visible ).
+
+With the new bigger training dataset we could train our 3 network architectures and all of them got a passing final score ( around 0.47 for each one ).
 
 ## **Network architecture and implementation** <a id='network_architecture'></a>
 
@@ -109,6 +151,22 @@ The student shall also provide a graph, table, diagram, illustration or figure f
 <!--The student demonstrates a clear understanding of 1 by 1 convolutions and where/when/how it should be used.
 
 The student demonstrates a clear understanding of a fully connected layer and where/when/how it should be used.-->
+
+We implemented three different FCN architectures using **convolutional layers**, **1x1 convolutions**, **transpose convolutions** and **max-pooling layers** ( this last one in the VGG based model ). Next, we explain each of these components :
+
+### _**Convolutional layers**_
+
+Convolutional layers are a special type of layers that operates by convolving filters over an input volume. This convolution operator is basically a dot-product of these filters over a portion of the input volume, and then sliding this **receptive field** over the entire input volume to get the resulting output volume of the operation.
+
+The following image ( from Stanford's cs231n great [**lecture**](http://cs231n.stanford.edu/slides/2018/cs231n_2018_lecture05.pdf) on convolutional networks ) shows the overview of this process.
+
+![CONVOLUTIONAL LAYER OVERVIEW 1][img_cs231n_cnn_basics_1]
+
+The resulting output volume is generated by applying all the filters in the convolutional layer and stacking the resulting activation maps into a single output volume, process that is shown in the following image ( again, from Stanford's cs231n [**lecture 5**](http://cs231n.stanford.edu/slides/2018/cs231n_2018_lecture05.pdf) )
+
+![CONVOLUTIONAL LAYER OVERVIEW 2][img_cs231n_cnn_basics_2]
+
+### _**1x1**_
 
 ![SIMPLE ARCHITECTURE 1][img_fcn_architecture_1]
 
@@ -161,8 +219,8 @@ TODO
 
 *   [**Variational AutoEncoders explanation**](https://www.youtube.com/watch?v=9zKuYvjFFS8)
 *   [**Stanford cs231n lecture on detection and segmentation**](https://youtu.be/nDPWywWRIRo?t=9m18s)
-
-
+*   [**Stanford cs231n notes on convolutional networks**](https://cs231n.github.io/convolutional-networks/)
+*   [**Stanford cs231n lecture 5 notes**](http://cs231n.stanford.edu/slides/2018/cs231n_2018_lecture05.pdf)
 
 ### **Network architecture**
 
