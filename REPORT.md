@@ -59,7 +59,7 @@ This project consists in the implementation of a Fully Convolutional Neural Netw
 To achieve this we followed these steps :
 
 *   Gathered training data from a simulator ( made a special build for easier data gathering, compared to the standard suggested approach ).
-*   Designed a implemented a Fully Convolutional Network ( using keras and tensorflow ) for the task of semantic segmentation, based on the lectures given at udacity's RoboND deep learning section, and in [this](https://people.eecs.berkeley.edu/%7Ejonlong/long_shelhamer_fcn.pdf) and [this](https://arxiv.org/pdf/1409.1556.pdf) papers.
+*   Designed and implemented a Fully Convolutional Network ( using keras and tensorflow ) for the task of semantic segmentation, based on the lectures given at udacity's RoboND deep learning section, and in [this](https://people.eecs.berkeley.edu/%7Ejonlong/long_shelhamer_fcn.pdf) and [this](https://arxiv.org/pdf/1409.1556.pdf) papers.
 *   Made experiments to tune our training hyperparameters ( learning rate, batch size and number of epochs ).
 *   Trained the designed model using the gathered training data, tuned the model hyperparameters, and checked the testing accuracy using the Intersection Over Union (IoU) metric.
 
@@ -129,11 +129,11 @@ The process to follow is to use the simulator to generate image data from the Gi
 
 ![QUADSIM data gathering 1][img_quadsim_data_gathering_1]
 
-The main bottleneck is to make the paths that the quadrotor and target person should follow, and also the spawning points for the other people. At first the functionality provided is enough to get some batches of data, but after some digging into an estimate of the amount of data required and some initial results we choose the options of taking large batches of data, mostly because we expected at first that our agent should be able to navigate the whole environment.
+The main bottleneck is to make the paths that the quadrotor and target person should follow, and also the spawning points for the other people. At first the functionality provided is enough to get some batches of data, but after estimating the amount of data required and some initial results we chose to take large batches of data, mostly because we expected at first that our agent should be able to navigate the whole environment.
 
 Based on some intuition from [**here**](https://youtu.be/C_LGsoe36I8?t=18m56s), in which they explain how imitation learning works for a self-driving car made by Nvidia, we got the conclussion that our dataset should be expressive enough, so large batches of data should be taken from the simulator, in various situations as explained in the lectures from Udacity ( tips about data gathering ).
 
-The current approach proposed, while possible, is a bit impractical if various scenarios are needed. Based on this issue, we decided to change the simulator in order to implement extra data-gathering tools for this purpose ( a quick video of the tools is found [**here**](https://www.youtube.com/watch?v=Nq95abB7FiE) ). The implementation I made to add these tools can be found in [**this**](https://github.com/udacity/RoboND-QuadRotor-Unity-Simulator) forked repo ( I will make a pull request, once I get to make a summary of the new options available and how to use them ).
+The current approach proposed, while possible, is a bit impractical if various scenarios are needed. Based on this issue, we decided to change the simulator in order to implement extra data-gathering tools for this purpose ( a quick video of the tools is found [**here**](https://www.youtube.com/watch?v=Nq95abB7FiE) ). The implementation I made to add these tools can be found in [**this**](https://github.com/wpumacay/RoboND-QuadRotor-Unity-Simulator) forked repo ( I will make a pull request, once I get to make a summary of the new options available and how to use them ).
 
 ![QUADSIM TOOLS][gif_quadsim_tools]
 
@@ -148,7 +148,7 @@ We added several options to allow the edition and saving/loading of this schedul
 
 Using this approach, we gathered a training set of **150000** training examples, which we preprocessed with a modified version of the preprocessing script provided ( link [**here**](https://github.com/wpumacay/RoboND-QuadRotor-Unity-Simulator/blob/master/preprocess_ims.py) ), which gives us a resulting dataset of **154131** ( including the provided initial training-only dataset ).
 
-We chose this amount of data because we wanted to try a bigger endoder architecture, which is based on the VGG-B configuration ( 13 layers ). Some colleagues in the lab have worked with these architectures, and as they suggested, some bigger dataset would be required because of the deeper architecture. 
+We chose this amount of data because we wanted to try a bigger endoder architecture, based on the VGG-B configuration ( 13 layers ). Some colleagues in the lab have worked with these architectures, and as they suggested, some bigger dataset would be required because of the deeper architecture. 
 
 To make sure that more data would be needed I ran some initial tests using the 3 architectures I will show in the next sections, and could not achieve the required score by a small margin ( 0.35 final score in the initial experiments ). Based on the false positive and false negatives returned we came to the conclussion that we needed more data, specially more data for 3 scenarios ( already suggested in the lectures ) :
 
@@ -189,10 +189,10 @@ The resulting output volume is generated by applying all the filters in the conv
 1x1 convolutions are convolution layers with filters of kernel 1x1 and strides of 1. The importance can be a bit counter intuitive, but as explained in the lectures, and in [**this**](https://www.coursera.org/lecture/convolutional-neural-networks/networks-in-networks-and-1x1-convolutions-ZTb8x) video ( from Andrew Ng's course in deep learning ), there are some key aspects that make the use 1x1 convolutions a good resource to use in network architectures :
 
 *   It's essentially the same as a fully connected layer, but it keeps the spatial dimensions in the output volume by not flattenig. 
-*   They provide a way add non-linearity without adding many parameters. We have to remember that a convolutional layer is followed by an activation function ( ReLU, for example ), which is the same case for 1x1 convolutional layers.
-*   They can help increse or decrease the dimensionality of our working volumes by just setting the required number of filters.
+*   They provide a way to add non-linearity without adding many parameters. We have to remember that a convolutional layer is followed by an activation function ( ReLU, for our case ), which is the same case for 1x1 convolutional layers.
+*   They can help increase or decrease the dimensionality of our working volumes by just setting the required number of filters.
 
-The following figure shows an example of dimensionality reduction of our volumes by using 1x1 convolutions ( image from the slides of [**this**](https://www.coursera.org/lecture/convolutional-neural-networks/networks-in-networks-and-1x1-convolutions-ZTb8x) by Andrew Ng ).
+The following figure shows an example of dimensionality reduction of our volumes by using 1x1 convolutions ( image from the slides of [**this**](https://www.coursera.org/lecture/convolutional-neural-networks/networks-in-networks-and-1x1-convolutions-ZTb8x) lecture by Andrew Ng ).
 
 ![1x1 CONVOLUTIONS][img_1x1_convolutions]
 
@@ -211,11 +211,11 @@ These are some methods we can use to upsample a volume :
 
     ![img_cs231n_transpose_convolutions]
 
-*   Resampling + Interpolation : which is to resize the original input volume to the required size, and interpolate the values according to some interpolation method, like bilinear interpolation. This is commonly used when scaling an image in an image edition software. The [**bilinear upsampling**] method is the one used in the [**utils**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/utils/separable_conv2d.py) provided.
+*   Resampling + Interpolation : which is to resize the original input volume to the required size, and interpolate the values according to some interpolation method, like bilinear interpolation. This is commonly used when scaling an image in an image edition software. The **bilinear upsampling**] method is the one used in the [**utils**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/utils/separable_conv2d.py) provided.
 
 ### _**Skip connections**_
 
-Skip connections consist on combining the volumes from previous layers ( like in the encoder's layers ) to the volumes in the decoder. This allows to include finner details to from previous layers into the last layers of our model. As described in [1], they make use of skip connections in their models, as shown in the following figure ( taken from the paper ).
+Skip connections consist on combining the volumes from previous layers ( the encoder's layers ) to the volumes in the decoder. This allows to include finner details from previous layers into the last layers of our model. As described in [1], they make use of skip connections in their models, as shown in the following figure ( taken from the paper ).
 
 ![img_fcn_paper_skip_connections]
 
@@ -223,7 +223,7 @@ The results of applying skip connections is that finner details are obtained in 
 
 ![img_fcn_paper_skip_connections_importance]
 
-We make use of skip connections in our model with this property in mind.
+We make use of skip connections in our model because of this property in mind.
 
 ### _**Max pooling**_
 
@@ -310,13 +310,13 @@ This model is based on the VGG-B configuration, and consists of :
 
 These were the parameters we chose in the models, as shown in the previous tables :
 
-*   **Kernel size** : we chose small kernel sizes, as they will give finner details, and we are dealing with images that are already of small resolution ( 160x160 ). This was a default size, but we kept it to that value because of this issue.
+*   **Kernel size** : we chose small kernel sizes, as they will give finner details, and we are dealing with images that are already of small resolution ( 160x160 ). This kernel size was a default size, but we kept it to that value because of this issue.
 
 *   **Strides** : the strides were chosen to 2x2, as we wanted to downsample and upsample by factors of 2. A bigger stride would result in downsampling and upsampling by a larger factor, and in the same way as with the kernel size, we are already dealing with low-resolution images, so we kept this as default. Although, it would be a good experiment to check that this indeed happens and the quality of the resulting segmentation is reduced as expected.
 
-*   **Output depth** : This were chosen accordingly to fit into our GPU, as some larger sizes in some cases resulted in crashes due to insufficient memory ( we trained our models in a PC with a GTX 1070, with 8GB of GPU memory ). Still, we gradually increased the depth in the encoder, and reduced it in the decoder.
+*   **Output depth** : This were chosen accordingly to fit our model into our GPU, as some larger sizes in some cases resulted in crashes due to insufficient memory ( we trained our models in a PC with a GTX 1070, with 8GB of GPU memory ). Still, we gradually increased the depth in the encoder, and reduced it in the decoder.
 
-*   **Number of layers** : This was more testing against overfitting. At first, we had 2 models ( Model 1 and Model 2 ), which are not quite deep. We first trained those with the provided training dataset and got some results that were close to a passing score ( 0.35 ). We then decided to get more data, as described in the data gathering section, which allowed to try a deeper model, like Model 3, which is based on VGG.
+*   **Number of layers** : This was more testing against overfitting. At first, we had 2 models ( Model 1 and Model 2 ), which are not quite deep. We first trained those with the provided training dataset and got some results that were close to a passing score ( 0.35 ). We then decided to get more data, as described in the data gathering section, which allowed to try a deeper model, like Model 3, which is based on VGG. We kept the number of layers to some low value for Models 1 and 2, and kept it high for Model 3. Still, all models were trained ( after these initial experiments ) in the big dataset.
 
 ## **Hyperparameters tuning** <a id='hyperparameters_tuning'></a>
 
@@ -346,7 +346,7 @@ We then tested for decreasing values ranging from 0.25 to 0.0005 and got the fol
 ![img_tuning_train_1]
 ![img_tuning_val_1]
 
-From the validation-losses graph we get that lower learning rates give more stable and better learning curves, so we chose a learning rate of 0.001 ( the next smallest value ).
+From the validation-losses graph we get that lower learning rates give more stable and better learning curves, so we chose a learning rate of 0.001 ( a value larger than the smallest tested value ).
 
 ### _**Batch size experiments**_
 
@@ -436,7 +436,7 @@ These are some conclusions we get from this work :
 
 *   The FCNs models implemented gave us good results in the semantic segmentation task at hand. This shows that Fully Convolutional Networks can be used very well for semantic segmentation given that we have enough data to train the addecuate models.
 *   From the first tests, we got the expected result that for a deeper model to work well we need the right amount of data, and that is why we chose to make a special build of the simulator that allowed us to take a big training dataset. This issue is fixed in the literature by using different architectures with different special characteristics for a given task ( for example, the UNet architecture is used for medical image segmentation, in which the datasets are not as big as the dataset we took from the simulator ).
-*   Given the current architecture, some changes should be made in order to track more objects, namely, the last layer should change to accomodate for a bigger number of target classes. If only the hero target is changed to another type of entity, then we could just use the same model and train with a different dataset. If we run the inference with the current network it would not give the appropiate results.
+*   Given the current architecture, some changes should be made in order to track more objects, namely, the last layer should change to accomodate for a bigger number of target classes. If only the hero target is changed to another type of entity, then we could just use the same model and train with a different dataset. If we run the inference with the current trained network it would not give the appropiate results.
 
 There are some techniques we could apply to improve our results, namely :
 
