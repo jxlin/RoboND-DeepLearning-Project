@@ -25,6 +25,8 @@
 [img_fcn_paper_skip_connections]: imgs/img_skip_connections.png
 [img_fcn_paper_skip_connections_importance]: imgs/img_skip_connections_importance.png
 
+[img_extra_dataset_pascal]: imgs/img_extra_dataset.png
+
 [img_tuning_train_1]: imgs/img_tuning_train_1.png
 [img_tuning_train_2]: imgs/img_tuning_train_2.png
 [img_tuning_train_3]: imgs/img_tuning_train_3.png
@@ -70,7 +72,7 @@ This work is divided into the following sections :
 3.  [Network architecture and implementation](#network_architecture)
 4.  [Hyperparameters tuning](#hyperparameters_tuning)
 5.  [Model training and Results](#model_training_and_results)
-6.  [Conclusions and future work](#conclusions)
+6.  [Discussion and future work](#conclusions)
 
 
 ## **Semantic segmentation and FCNs** <a id='semantic_segmentation'></a>
@@ -117,7 +119,6 @@ The intuition of why this architecture would work is because of the encoding-dec
 
 *   The encoding structure is in charge of reducing the original input volume to a smaller volume representation, which holds information that describe this image.
 *   The decoding structure is in charge of taking this volume representation and generating an output image that solves the task at hand ( in our case, generate the pixel-wise classification of the input image in an output volume ).
-
 
 ## **Data gathering** <a id='data_gathering'></a>
 
@@ -407,7 +408,7 @@ def fcn_vgg_model( inputs, num_classes ) :
     return layers.Conv2D( num_classes, 3, activation = 'softmax', padding = 'same' )(x)
 ```
 
-### Network architecture parameters
+### _**Network architecture parameters**_
 
 These were the parameters we chose in the models, as shown in the previous tables :
 
@@ -418,6 +419,28 @@ These were the parameters we chose in the models, as shown in the previous table
 *   **Output depth** : This were chosen accordingly to fit our model into our GPU, as some larger sizes in some cases resulted in crashes due to insufficient memory ( we trained our models in a PC with a GTX 1070, with 8GB of GPU memory ). Still, we gradually increased the depth in the encoder, and reduced it in the decoder.
 
 *   **Number of layers** : This was more testing against overfitting. At first, we had 2 models ( Model 1 and Model 2 ), which are not quite deep. We first trained those with the provided training dataset and got some results that were close to a passing score ( 0.35 ). We then decided to get more data, as described in the data gathering section, which allowed to try a deeper model, like Model 3, which is based on VGG. We kept the number of layers to some low value for Models 1 and 2, and kept it high for Model 3. Still, all models were trained ( after these initial experiments ) in the big dataset.
+
+### _**About the model usage in other dataset**_
+
+The described model can be used to do semantic segmentation on different scenarios, namely different classes of objects. As they describe in [1], they used their [**FCN implementation**](https://github.com/shelhamer/fcn.berkeleyvision.org) in various datasets, e.g. the [**PASCAL VOC2011**](http://host.robots.ox.ac.uk/pascal/VOC/voc2012/segexamples/index.html) dataset.
+
+![img_extra_dataset_pascal]
+
+This is a good approach, which allows to make a general semantic segmenter without using hand-crafted features ( which would be quite inpractical when dealing with different classes as would need to create different feature extractors for each scenario ).
+
+One point to keep in mind is to use the right dataset and implement the appropiate interfaces in the inputs and the outputs :
+
+*   The training masks might have a different number of channels or a different representation ( 1-value for each label in a pixel ), so we would need to adapt this using the right input interface.
+*   The same goes for the output volume, as if we had a different number of classes we would need to change the output interface ( the last softmax layer would have a different output size ) and then we would need to implement/use the right output interface if we wanted to visualize the segmentation results as an RGB volume.
+
+For example, in our lab a colleague is working with medical image segmentation and he is using Unet. The datasets he is working on consists of 4-5 classes, and he uses the same intermediate architecture, just modifying the input and output interfaces to deal with the dataset and the final visualization.
+
+Even though the same model can be used, there might be some tweaking needed if working with a different scenario ( apart from the input-output interfaces and using the right dataset ).
+Depending on the object to track, there might be some amound of representation that a simple encoder might not be able to capture. In the context of animals or people, it is reasonable to assume that the objects are not that complex compared to something of way more complexity ( of course, cats could be occluded and deformed, but an encoder trained for extracting features from it could be used after some training on another dataset into some other animal, like a dog ). A car also seems reasonable because of its shape and complexity.
+
+The point I'm trying to make ( as suggested by some of my colleagues ) is that if the encoder is not able to extract enough representation from the objects, because of complexity, then some tweaks to the architectures would be needed, like making it a bit deeper, adding inception modules, etc. ; but for if we were to just swap the person for a cat, the same model could be used and trained in the appropiate dataset ( one with masks with cats in it ).
+
+In our scenario, it seems that the first two models are complex enough for the task, even when swapping target classes, and the third model seems to have unnecesarry complexity for the simple nature scenario. However, this would not be the case if more complex scenarios and finner segmentation details over a larger number of classes was needed, and the more complex encoder would be the right choice for this new task.
 
 ## **Hyperparameters tuning** <a id='hyperparameters_tuning'></a>
 
@@ -531,7 +554,7 @@ The resulting final score ( IoU based ) for one of our Model 2 is 0.465.
 
 All the trained models that we uploaded obtained a score greater than the required score of 0.4, with values oscillating very close to the previously mentioned score.
 
-## **Conclusions and future work** <a id='conclusions'></a>
+## **Discussion and future work** <a id='conclusions'></a>
 
 These are some conclusions we get from this work :
 
