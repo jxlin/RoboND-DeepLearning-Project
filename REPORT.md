@@ -256,7 +256,28 @@ This model consists of :
 |   dconv3  |  BiUpsample + Skip. + Conv.* + Batch Norm.* |      3x3*     |     2x2     |       32      |
 |   softmax |  Conv. + SoftMax activation                 |      3x3      |     1x1     |       3       |
 
-1.  3 Convolutional layers, with kernel sizes of
+The implementation can be found in the **fcn_model_1** function, in the [**model_training.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/model_training.ipynb)
+
+```python
+def fcn_model_1(inputs, num_classes):
+    print( 'LOG> fcn model 1 ********' )
+    _conv1 = encoder_block( inputs, 32, 2 )
+    showShape( _conv1, '_conv1' )
+    _conv2 = encoder_block( _conv1, 64, 2 )
+    showShape( _conv2, '_conv2' )
+    _conv3 = encoder_block( _conv2, 128, 2 )
+    showShape( _conv3, '_conv3' )
+    _mid = conv2d_batchnorm( _conv3, 256, 1 )
+    showShape( _mid, '_mid' )
+    _tconv1 = decoder_block( _mid, _conv2, 128 )
+    showShape( _tconv1, '_tconv1' )
+    _tconv2 = decoder_block( _tconv1, _conv1, 64 )
+    showShape( _tconv2, '_tconv2' )
+    
+    x = decoder_block( _tconv3, inputs, 32 )
+    showShape( x, 'x' )
+    return layers.Conv2D(num_classes, 3, activation='softmax', padding='same')(x)
+```
 
 #### _**Model 2**_
 
@@ -276,6 +297,33 @@ This model consists of :
 |   dconv3  |  BiUpsample + Skip. + Conv.* + Batch Norm.* |      3x3*     |     2x2     |       64      |
 |   dconv4  |  BiUpsample + Skip. + Conv.* + Batch Norm.* |      3x3*     |     2x2     |       32      |
 |   softmax |  Conv. + SoftMax activation                 |      3x3      |     1x1     |       3       |
+
+The implementation can be found in the **fcn_model_2** function, in the [**model_training.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/model_training.ipynb)
+
+```python
+def fcn_model_2(inputs, num_classes):
+    print( 'LOG> fcn model 2 ********' )
+    _conv1 = encoder_block( inputs, 32, 2 )
+    showShape( _conv1, '_conv1' )
+    _conv2 = encoder_block( _conv1, 64, 2 )
+    showShape( _conv2, '_conv2' )
+    _conv3 = encoder_block( _conv2, 128, 2 )
+    showShape( _conv3, '_conv3' )
+    _conv4 = encoder_block( _conv3, 256, 2 )
+    showShape( _conv4, '_conv4' )
+    _mid = conv2d_batchnorm( _conv4, 512, 1 )
+    showShape( _mid, '_mid' )
+    _tconv1 = decoder_block( _mid, _conv3, 256 )
+    showShape( _tconv1, '_tconv1' )
+    _tconv2 = decoder_block( _tconv1, _conv2, 128 )
+    showShape( _tconv2, '_tconv2' )
+    _tconv3 = decoder_block( _tconv2, _conv1, 64 )
+    showShape( _tconv3, '_tconv3' )
+    
+    x = decoder_block( _tconv3, inputs, 32 )
+    showShape( x, 'x' )
+    return layers.Conv2D(num_classes, 3, activation='softmax', padding='same')(x)
+```
 
 #### _**Model 3**_
 
@@ -305,6 +353,59 @@ This model is based on the VGG-B configuration, and consists of :
 |   dconv4  |  BiUpsample + Skip. + Conv.* + Batch Norm.* |      3x3*     |     2x2     |       64      |
 |   dconv4  |  BiUpsample + Skip. + Conv.* + Batch Norm.* |      3x3*     |     2x2     |       32      |
 |   softmax |  Conv. + SoftMax activation                 |      3x3      |     1x1     |       3       |
+
+The implementation can be found in the **fcn_vgg_model** function, in the [**model_training.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/model_training.ipynb)
+
+```python
+def fcn_vgg_model( inputs, num_classes ) :
+    print( 'LOG> vgg based model ********' )
+    _conv1 = encoder_block( inputs, 32, 1 )
+    showShape( _conv1, '_conv1' )
+    _pool1 = vgg_max_pooling_layer( _conv1 )
+    showShape( _pool1, '_pool1' )
+    
+    _conv2 = encoder_block( _pool1, 64, 1 )
+    showShape( _conv2, '_conv2' )
+    _pool2 = vgg_max_pooling_layer( _conv2 )
+    showShape( _pool2, '_pool2' )
+    
+    _conv3 = encoder_block( _pool2, 128, 1 )
+    showShape( _conv3, '_conv3' )
+    _conv4 = encoder_block( _conv3, 128, 1 )
+    showShape( _conv4, '_conv4' )
+    _pool3 = vgg_max_pooling_layer( _conv4 )
+    showShape( _pool3, '_pool3' )
+    
+    _conv5 = encoder_block( _pool3, 256, 1 )
+    showShape( _conv5, '_conv5' )
+    _conv6 = encoder_block( _conv5, 256, 1 )
+    showShape( _conv6, '_conv6' )
+    _pool4 = vgg_max_pooling_layer( _conv6 )
+    showShape( _pool4, '_pool4' )
+    
+    _conv7 = encoder_block( _pool4, 256, 1 )
+    showShape( _conv7, '_conv7' )
+    _conv8 = encoder_block( _conv7, 256, 1 )
+    showShape( _conv8, '_conv8' )
+    _pool5 = vgg_max_pooling_layer( _conv8 )
+    showShape( _pool5, '_pool5' )
+    
+    _mid = conv2d_batchnorm( _pool5, 512, 1 )
+    showShape( _mid, '_mid' )
+    
+    _tconv1 = decoder_block( _mid, _pool4, 256 )
+    showShape( _tconv1, '_tconv1' )
+    _tconv2 = decoder_block( _tconv1, _pool3, 256 )
+    showShape( _tconv2, '_tconv2' )
+    _tconv3 = decoder_block( _tconv2, _pool2, 128 )
+    showShape( _tconv3, '_tconv3' )
+    _tconv4 = decoder_block( _tconv3, _pool1, 64 )
+    showShape( _tconv4, '_tconv4' )
+    
+    x = decoder_block( _tconv4, inputs, 32 )
+    showShape( x, 'x' )
+    return layers.Conv2D( num_classes, 3, activation = 'softmax', padding = 'same' )(x)
+```
 
 ### Network architecture parameters
 
