@@ -33,6 +33,10 @@
 [img_tuning_val_2]: imgs/img_tuning_val_2.png
 [img_tuning_val_3]: imgs/img_tuning_val_3.png
 
+[img_results_learning_curve]: imgs/img_results_learning_curve.png
+[img_results_inference_follow_target]: imgs/img_results_inference_follow_target.png
+[img_results_inference_no_target]: imgs/img_results_inference_no_target.png
+[img_results_inference_target_far]: imgs/img_results_inference_target_far.png
 [img_IoU_results]: imgs/img_IoU_results.png
 
 [gif_follow_me_sample_1]: imgs/gif_follow_me_sample_1.gif
@@ -394,8 +398,33 @@ The trained models can be found [**here**](https://github.com/wpumacay/RoboND-De
 *   Weights 3 ( model_weights_simple_3_full_dataset.h5 ) : Model 2.
 *   Weights 4 ( model_weights_vgg.h5 ) : Model 3 based on VGG-B configuration architecture ( reference [**here**](https://arxiv.org/pdf/1409.1556.pdf) ). The encoder has 8 convolutional layers and 5 max. pooling layers.
 
+The results for **Model 2** are saved in the [**model_training.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/model_training.ipynb), and the other results are stored in copies of the notebooks in the [**tests**](https://github.com/wpumacay/RoboND-DeepLearning-Project/tree/master/code/tests) folder :
+
+*   Model 1 trained with batch size of 32 : [**model_training_fcn_model_1_32.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/tests/model_training_fcn_model_1_32.ipynb)
+*   Model 1 trained with batch size of 64 : [**model_training_fcn_model_1_64.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/tests/model_training_fcn_model_1_64.ipynb)
+*   Model 2 trained with batch size of 64 : [**model_training_fcn_model_2_64.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/tests/model_training_fcn_model_2_64.ipynb)
+*   Model 3 vgg based : [**model_training_fcn_model_vgg.ipynb**](https://github.com/wpumacay/RoboND-DeepLearning-Project/blob/master/code/tests/model_training_fcn_model_vgg.ipynb)
+
+The following figure shows the learning curve for **Model 2**, which can be found in the respective test-notebook.
+
+![img_results_learning_curve]
+
+And the results from inference for **Model 2** are the following :
+
+#### **Following target**
+
+![img_results_inference_follow_target]
+
+#### **No target**
+
+![img_results_inference_no_target]
+
+#### **Target far**
+
+![img_results_inference_target_far]
+
 <!-- RUBRIC POINT 7 DONE -->
-The resulting final score ( IoU based ) for one of our models is 0.465.
+The resulting final score ( IoU based ) for one of our Model 2 is 0.465.
 
 ![RESULT_IOU_0][img_IoU_results]
 
@@ -403,9 +432,31 @@ All the trained models that we uploaded obtained a score greater than the requir
 
 ## **Conclusions and future work** <a id='conclusions'></a>
 
-TODO
+These are some conclusions we get from this work :
 
-<!-- RUBRIC POINT 5 -->
+*   The FCNs models implemented gave us good results in the semantic segmentation task at hand. This shows that Fully Convolutional Networks can be used very well for semantic segmentation given that we have enough data to train the addecuate models.
+*   From the first tests, we got the expected result that for a deeper model to work well we need the right amount of data, and that is why we chose to make a special build of the simulator that allowed us to take a big training dataset. This issue is fixed in the literature by using different architectures with different special characteristics for a given task ( for example, the UNet architecture is used for medical image segmentation, in which the datasets are not as big as the dataset we took from the simulator ).
+*   Given the current architecture, some changes should be made in order to track more objects, namely, the last layer should change to accomodate for a bigger number of target classes. If only the hero target is changed to another type of entity, then we could just use the same model and train with a different dataset. If we run the inference with the current network it would not give the appropiate results.
+
+There are some techniques we could apply to improve our results, namely :
+
+*   We emphasized the need for more data for our deeper models, but we could have also used data augmentation by means of flipping the images ( would increase the dataset by a factor or 4 ).
+*   We could also try to add some regularization ( for example, by using dropout ).
+*   For our deeper models we could have tried removing some skip connections to reduce some computation costs and unnecesary complexity, as stated in the lectures when using a pre-trained deeper model for the encoder.
+*   We could have also used a pre-trained encoder, like VGG or ResNet, and then train the rest of the model. This could have saved some time and allowed us to experiment with a larger number of epochs to handle our big dataset. A reference would be [**this**](https://medium.com/@franky07724_57962/using-keras-pre-trained-models-for-feature-extraction-in-image-clustering-a142c6cdf5b1) post.
+
+There are some changes that I think would be nice to the project. First, some issues :
+
+*   Some fixes should be made to the environment.yml provided, as with Python 3.5 there are some dependencies that crash when doing inference with the simulator in Follow-Me mode ( the Qt dependency gives an issue with an object called PySlice_, which I could not find in the forums ). I tried using Python 3.6 and this fixed the issue ( environment36.yml )
+*   It would be great if the current version of the notebook could be ported to the latest version of tensorflow, because when trying with my own hardware I had to make special configurations to use previous versions of CUDA and CuDNN. These old versions do not work correctly in Ubuntu 18.04, so I had to format my computer and use 16.04 instead.
+
+Some improvements :
+
+*   The tools I mentioned earlier could be merged into the main branch in order to have better data-gathering tools.
+*   The simulator can be easily hacked to make use of some nicer features. One nice feature I would like to implement is to make the simulator work like [**RoboCode**](http://robocode.sourceforge.net/), and allow to make agents that fight each other, train RL agents or even make a gym environment out of it. Also, there should be a refactor stage of the current code, as it was a bit difficult to go around the current version of the simulator's code.
+*   The previous could be easily applied to the Rover simulator, allowing to make a self-driving rover that uses a more sophisticated perception pipeline to navigate.
+
+<!-- RUBRIC POINT 5 DONE -->
 <!--The student is able to clearly articulate whether this model and data would work well for following another object (dog, cat, car, etc.) instead of a human and if not, what changes would be required. -->
 
 
